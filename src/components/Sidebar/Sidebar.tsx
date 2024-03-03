@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { navigationElements, snsLink } from "../constant";
+import { navigationElements, snsLink } from "../../constant";
 
 interface SidebarProps {
   currentContent: string;
@@ -44,7 +44,7 @@ const Sidebar = ({ currentContent }: SidebarProps) => {
             transition-colors
             ${
               currentContent == element.id
-                ? "bg-gradient-to-tr from-gray-300 to-gray-200 text-blue-900"
+                ? "bg-gradient-to-tr from-gray-300 to-white text-blue-900"
                 : "hover:bg-gray-100 text-gray-500"
             }
             `}

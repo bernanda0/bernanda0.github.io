@@ -1,49 +1,58 @@
-import { Home, Handyman, Code, PhotoAlbum, Email, GitHub, LinkedIn, Instagram } from '@mui/icons-material'
+import {
+  Home,
+  Handyman,
+  Code,
+  Business,
+  Email,
+  GitHub,
+  LinkedIn,
+  Instagram,
+} from "@mui/icons-material";
 
 const navigationElements = [
   {
     id: "home",
     title: "Home",
-    icon: Home
+    icon: Home,
   },
   {
     id: "skills",
     title: "Skills",
-    icon: Handyman
+    icon: Handyman,
   },
   {
     id: "projects",
     title: "Project",
-    icon: Code
+    icon: Code,
   },
   {
-    id: "artblog",
-    title: "Art & Blog",
-    icon: PhotoAlbum
+    id: "exp",
+    title: "Experience",
+    icon: Business,
   },
   {
     id: "contact",
     title: "Contact Me",
-    icon: Email
-  }
+    icon: Email,
+  },
 ];
 
 const snsLink = [
   {
     title: "Github",
     link: "https://github.com/bernanda0",
-    icon: GitHub
+    icon: GitHub,
   },
   {
     title: "LinkedIn",
     link: "https://www.linkedin.com/in/bernanda.rai",
-    icon: LinkedIn
+    icon: LinkedIn,
   },
   {
-    title: "Instagram", 
+    title: "Instagram",
     link: "https://www.instagram.com/bernanda.rai",
-    icon: Instagram
-  }
-]
- 
-export { navigationElements, snsLink }
+    icon: Instagram,
+  },
+];
+
+export { navigationElements, snsLink };

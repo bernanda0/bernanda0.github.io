@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import Hero from "./section/Hero";
 import Skills from "./section/Skills";
 import Projects from "./section/Projects";
-import ArtBlog from "./section/ArtBlog";
 import ContactMe from "./section/ContactMe";
+import Experience from "./section/Experience";
 
 function App() {
   const [section, setSection] = useState("home");
@@ -48,8 +48,8 @@ function App() {
         <section id="projects">
           <Projects />
         </section>
-        <section id="artblog">
-          <ArtBlog />
+        <section id="exp">
+          <Experience />
         </section>
         <section id="contact">
           <ContactMe />
