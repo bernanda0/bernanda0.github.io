@@ -1,11 +1,11 @@
 "use client";
 
-import ArtBlog from "@/components/ArtBlog";
-import ContactMe from "@/components/ContactMe";
-import Hero from "@/components/Hero";
-import Projects from "@/components/Projects";
+import ArtBlog from "@/pages/ArtBlog";
+import ContactMe from "@/pages/ContactMe";
+import Hero from "@/pages/Hero";
+import Projects from "@/pages/Projects";
 import Sidebar from "@/components/Sidebar";
-import Skills from "@/components/Skills";
+import Skills from "@/pages/Skills";
 import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -15,13 +15,16 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const sections = document.querySelectorAll('section');
-      
-      let currentSectionId = '';
+      const sections = document.querySelectorAll("section");
+
+      let currentSectionId = "";
       sections.forEach((section) => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.offsetHeight;
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+        if (
+          scrollPosition >= sectionTop &&
+          scrollPosition < sectionTop + sectionHeight
+        ) {
           currentSectionId = section.id;
         }
       });
@@ -29,35 +32,38 @@ export default function Home() {
       setSection(currentSectionId);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-
   return (
-    <Router>
-      <main className="App flex">
-        <Sidebar currentContent={section} />
-        <div className="flex-1 pl-16 overflow-hidden">
-          <section id="home">
-            <Hero />
-          </section>
-          <section id="skills">
-            <Skills />
-          </section>
-          <section id="projects">
-            <Projects />
-          </section>
-          <section id="artblog">
-            <ArtBlog />
-          </section>
-          <section id="contact">
-            <ContactMe />
-          </section>
-        </div>
-      </main>
-    </Router>
+    <div suppressHydrationWarning>
+      {typeof window === "undefined" ? null : (
+        <Router>
+          <main className="App flex">
+            <Sidebar currentContent={section} />
+            <div className="flex-1 pl-16 overflow-hidden">
+              <section id="home">
+                <Hero />
+              </section>
+              <section id="skills">
+                <Skills />
+              </section>
+              <section id="projects">
+                <Projects />
+              </section>
+              <section id="artblog">
+                <ArtBlog />
+              </section>
+              <section id="contact">
+                <ContactMe />
+              </section>
+            </div>
+          </main>
+        </Router>
+      )}
+    </div>
   );
 }
