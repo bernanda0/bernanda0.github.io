@@ -1,7 +1,5 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { navigationElements, snsLink } from "@/constant";
+import { useEffect, useState } from "react";
+import { navigationElements, snsLink } from "../constant";
 
 interface SidebarProps {
   currentContent: string;
@@ -14,13 +12,13 @@ const Sidebar = ({ currentContent }: SidebarProps) => {
     setContent(pageId);
   };
 
-  // useEffect(() => {
-  //   window.location.hash = `#${content}`; // Update the URL with the selected pageId
-  //   const sectionElement = document.getElementById(content);
-  //   if (sectionElement) {
-  //     sectionElement.scrollIntoView({ behavior: "smooth" }); // Scroll to the selected section
-  //   }
-  // }, [content]);
+  useEffect(() => {
+    window.location.hash = `#${content}`; // Update the URL with the selected pageId
+    const sectionElement = document.getElementById(content);
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ behavior: "smooth" }); // Scroll to the selected section
+    }
+  }, [content]);
 
   const handleLogoClick = () => {
     window.location.reload(); // Refresh the web page
@@ -46,8 +44,8 @@ const Sidebar = ({ currentContent }: SidebarProps) => {
             transition-colors
             ${
               currentContent == element.id
-                ? "bg-gradient-to-tr from-blue-200 to-blue-100 text-blue-700"
-                : "hover:bg-blue-50 text-gray-600"
+                ? "bg-gradient-to-tr from-gray-300 to-gray-200 text-blue-900"
+                : "hover:bg-gray-100 text-gray-500"
             }
             `}
             >

@@ -1,4 +1,4 @@
-import { Home, Handyman, Code, PhotoAlbum, Email, GitHub, LinkedIn, Instagram, Menu } from '@/lib/mui';
+import { Home, Handyman, Code, PhotoAlbum, Email, GitHub, LinkedIn, Instagram } from '@mui/icons-material'
 
 const navigationElements = [
   {
