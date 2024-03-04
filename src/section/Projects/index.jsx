@@ -10,9 +10,16 @@ import {
 import { database } from "../../api/firebase";
 import { useEffect, useState } from "react";
 import { Avatar } from "@mui/material";
+import { Code, GitHub } from "@mui/icons-material";
+import { CodeBracketIcon } from "@heroicons/react/16/solid";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [visibleProjects, setVisibleProjects] = useState(3); // Initial number of projects to display
+
+  const handleSeeMore = () => {
+    setVisibleProjects((prevCount) => prevCount + 3); // Show 3 more projects when "See More" is clicked
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -25,11 +32,14 @@ const Projects = () => {
             id: doc.id,
             ...doc.data(),
           });
+          console.log(doc.data().description);
         });
-        // sort by id
+
         projectList.sort((a, b) => {
-          return a.id - b.id;
+          return b.id - a.id;
         });
+
+        console.log(projectList);
         setProjects(projectList);
       }
     };
@@ -37,31 +47,34 @@ const Projects = () => {
   }, []);
 
   return (
-    <div className="h-full w-full pt-10 flex flex-col justify-center">
+    <div className="h-full w-full pt-10 flex flex-col">
       <div className="flex flex-col mb-20">
         <h1 className="text-4xl ml-8 w-48 mb-12 font-mono font-bold animate-bounce">
           Projects
         </h1>
-        <div className="flex flex-row flex-wrap justify-center px-48">
-          {projects.map((project, index) => (
-            <div key={project.id} className="w-1/3 px-2">
+        <div className="flex flex-row flex-wrap px-[10rem]">
+          {projects.slice(0, visibleProjects).map((project, index) => (
+            <div key={project.id} className="w-1/3 pr-2">
               <ProjectCard
                 title={project.title}
                 description={project.description}
+                tags={project.tags}
                 image={project.image}
                 github_links={project.github_links}
                 live_links={project.live_links}
+                date={project.date}
               />
             </div>
           ))}
-
-          {/* Add empty ProjectCard components to fill rows */}
-          {[...Array(6 - (projects.length % 3))].map((_, index) => (
-            <div key={index} className="w-1/3 px-2 py-2">
-              <ProjectCard />
-            </div>
-          ))}
         </div>
+        {visibleProjects < projects.length && (
+          <button
+            onClick={handleSeeMore}
+            className="mt-4 mx-auto w-48 bg-gray-800 text-white py-2 px-4 rounded-3xl font-mono transition duration-300 hover:bg-gray-700"
+          >
+            See More
+          </button>
+        )}
       </div>
     </div>
   );
@@ -69,64 +82,106 @@ const Projects = () => {
 
 const ProjectCard = ({
   title,
+  tags,
   description,
   image,
   github_links,
   live_links,
+  date,
 }) => {
   return (
-    <Card className="max-w-[24rem] overflow-hidden rounded-md m-2">
+    <Card className="max-w-[24rem] overflow-hidden rounded-md m-2 mb-14">
       <CardHeader
         floated={false}
         shadow={false}
         color="transparent"
         className="m-0 rounded-none"
       >
-        <div className={`relative bg-gray-800 inline-block p-6`}>
-          <div className="w-[24rem] h-[12rem] overflow-hidden">
-            <img
-              src={
-                image
-                // "https://www.pinclipart.com/picdir/big/157-1578186_user-profile-default-image-png-clipart.png"
-              }
-              alt="Logo"
-              className="w-full h-full object-cover"
-              style={{ display: "block", borderRadius: "50%" }}
-            />
+        <div
+          className={`flex h-full w-[24rem] bg-gray-800 p-6 justify-center items-center`}
+        >
+          <div className="w-[120px] h-[120px] my-8 flex items-center justify-center overflow-hidden rounded-full bg-white hover:scale-110 ease-in-out transition-transform">
+            {image ? (
+              <img
+                src={image}
+                alt="Logo"
+                className="w-full h-full object-cover"
+                style={{ display: "block", borderRadius: "50%" }}
+              />
+            ) : (
+              <span className="text-black text-[3rem] font-bold">
+                {title &&
+                  title
+                    .split(" ")
+                    .map((word) => word[0])
+                    .join("")
+                    .toUpperCase()}
+              </span>
+            )}
           </div>
         </div>
       </CardHeader>
       <CardBody>
-        <Typography variant="h4" color="blue-gray">
-          UI/UX Review Check
+        <Typography
+          variant="h4"
+          className="mb-2 text-2xl font-bold text-blue-800"
+        >
+          {title}
         </Typography>
-        <Typography variant="lead" color="gray" className="mt-3 font-normal">
-          Because it&apos;s about motivating the doers. Because I&apos;m here to
-          follow my dreams and inspire others.
+        <div className="flex flex-wrap">
+          {tags &&
+            tags.split(", ").map((tag) => (
+              <p
+                className="text-gray-500 bg-gray-100 rounded-2xl p-2 text-xs mr-1"
+                key={tag}
+              >
+                {tag}
+              </p>
+            ))}
+        </div>
+        {/* add for tag with gray text color */}
+        <Typography
+          variant="lead"
+          color="gray"
+          className="mt-4 font-normal h-[6rem] text-base text-gray-500 text-justify"
+        >
+          {description}
         </Typography>
       </CardBody>
       <CardFooter className="flex items-center justify-between">
-        <div className="flex items-center -space-x-3">
-          <Tooltip content="Natali Craig">
-            <Avatar
-              size="sm"
-              variant="circular"
-              alt="natali craig"
-              src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1061&q=80"
-              className="border-2 border-white hover:z-10"
-            />
+        <div className="flex items-center space-x-3">
+          <Tooltip content="Github">
+            {/* if github link exist blue if not gray */}
+            <GitHub
+              className={
+                github_links
+                  ? "text-blue-800 hover:cursor-pointer"
+                  : "text-gray-500"
+              }
+              onClick={() => {
+                if (github_links) {
+                  window.open(github_links, "_blank");
+                }
+              }}
+            ></GitHub>
           </Tooltip>
-          <Tooltip content="Tania Andrew">
-            <Avatar
-              size="sm"
-              variant="circular"
-              alt="tania andrew"
-              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-              className="border-2 border-white hover:z-10"
-            />
+
+          <Tooltip content="Live">
+            <Code
+              className={
+                live_links
+                  ? "text-blue-800 hover:cursor-pointer"
+                  : "text-gray-500"
+              }
+              onClick={() => {
+                if (live_links) {
+                  window.open(live_links, "_blank");
+                }
+              }}
+            ></Code>
           </Tooltip>
         </div>
-        <Typography className="font-normal">January 10</Typography>
+        <Typography>{date ? date : ""}</Typography>
       </CardFooter>
     </Card>
   );
