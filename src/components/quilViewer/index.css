@@ -1,0 +1,13 @@
+/* QuillViewer.css */
+.quill-viewer-container .ql-container.ql-snow {
+    border: none !important;
+}
+
+.quill-viewer-container .ql-editor {
+    padding: 0 !important;
+}
+
+.ql-editor {
+    margin : 0 24px 0 24px;
+}
+  

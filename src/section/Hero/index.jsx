@@ -6,7 +6,7 @@ const Hero = () => {
       "backend",
       "system design",
       "computer networks",
-      "mobile development",
+      "iOS app engineer",
     ],
     loop: true,
     typeSpeed: 120,
@@ -31,11 +31,18 @@ const Hero = () => {
           </p>
           <p className="text-sm font-bold">...</p>
           <p className="text-base mt-4 mx-36 text-center">
-            A Computer Engineering student with a passion for IT and software
-            engineering. I've dived into many IT fields including backend
-            development and system design, computer network, also building
-            mobile application, refining my skills hands-on. Excited to
-            contribute these skills to a team as I thrive in the dynamic tech
+            A passionate and hardworking individual with a keen interest in IT
+            and software engineering.{" "}
+          </p>
+          <p className="text-base mt-4 mx-36 text-center">
+            {" "}
+            I have immersed myself in various fields such as
+            <span className="font-bold"> iOS application development</span>,
+            <span className="font-bold"> backend engineering</span>,
+            <span className="font-bold"> system design</span>, and
+            <span className="font-bold"> computer networks</span>, honing my
+            skills through hands-on experience. I am enthusiastic about
+            contributing these skills to a team, as I thrive in the dynamic tech
             landscape.
           </p>
         </div>

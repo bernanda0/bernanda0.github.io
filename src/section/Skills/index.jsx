@@ -93,6 +93,22 @@ const Skills = () => {
         </h1>
       </div>
 
+      {/* for mobile devs */}
+      <div className="flex items-center ml-24">
+        <h1 className="text-xl -rotate-90 font-mono text-start w-20">Mobile</h1>
+        <div className="flex flex-wrap">
+          {mobileSkills.map((skill) => (
+            <Skillsquare
+              key={skill.id}
+              logo={skill.logo}
+              title={skill.title}
+              description={skill.desc}
+              expertise={skill.expertise}
+            />
+          ))}
+        </div>
+      </div>
+
       {/* for backend */}
       <div className="flex items-center ml-24">
         <h1 className="text-xl -rotate-90 font-mono w-20">Backend</h1>
@@ -116,22 +132,6 @@ const Skills = () => {
         </h1>
         <div className="flex flex-wrap">
           {webSkills.map((skill) => (
-            <Skillsquare
-              key={skill.id}
-              logo={skill.logo}
-              title={skill.title}
-              description={skill.desc}
-              expertise={skill.expertise}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* for mobile devs */}
-      <div className="flex items-center ml-24">
-        <h1 className="text-xl -rotate-90 font-mono text-start w-20">Mobile</h1>
-        <div className="flex flex-wrap">
-          {mobileSkills.map((skill) => (
             <Skillsquare
               key={skill.id}
               logo={skill.logo}

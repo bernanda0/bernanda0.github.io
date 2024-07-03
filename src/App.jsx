@@ -5,6 +5,7 @@ import Skills from "./section/Skills";
 import Projects from "./section/Projects";
 import ContactMe from "./section/ContactMe";
 import Experience from "./section/Experience";
+import { AuthProvider, useAuth } from "./auth/AuthProvider";
 
 function App() {
   const [section, setSection] = useState("home");
@@ -36,9 +37,9 @@ function App() {
   }, []);
 
   return (
-    <>
+    <AuthProvider>
       <Sidebar currentContent={section} />
-      <div className="flex-1 pl-16 overflow-hidden">
+      <div className="flex-1 pl-16 overflow-hidden bg-black">
         <section id="home">
           <Hero />
         </section>
@@ -55,7 +56,7 @@ function App() {
           <ContactMe />
         </section>
       </div>
-    </>
+    </AuthProvider>
   );
 }
 

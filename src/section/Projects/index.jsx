@@ -1,25 +1,62 @@
-import { collection, getDocs, query } from "@firebase/firestore";
 import {
+  collection,
+  doc,
+  getDoc,
+  updateDoc,
+  getDocs,
+  query,
+} from "@firebase/firestore";
+import {
+  Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  Carousel,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
 import { database } from "../../api/firebase";
 import { useEffect, useState } from "react";
-import { Avatar } from "@mui/material";
-import { Code, GitHub } from "@mui/icons-material";
-import { CodeBracketIcon } from "@heroicons/react/16/solid";
+import {
+  Avatar,
+  Box,
+  Dialog,
+  ImageListItem,
+  ImageListItemBar,
+} from "@mui/material";
+import {
+  BrowseGallery,
+  Code,
+  CodeOutlined,
+  CodeRounded,
+  CodeSharp,
+  GitHub,
+  Image,
+  InfoOutlined,
+  Link,
+  Close,
+} from "@mui/icons-material";
+import { CodeBracketIcon, ListBulletIcon } from "@heroicons/react/16/solid";
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Autoplay,
+  Keyboard,
+  Mousewheel,
+  Navigation,
+  Pagination,
+} from "swiper/modules";
+import { CodeBracketSquareIcon } from "@heroicons/react/16/solid";
+import QuillViewer from "../../components/quilViewer";
+import Editable from "../../components/editable";
+import { useAuth } from "../../auth/AuthProvider";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
-  const [visibleProjects, setVisibleProjects] = useState(3); // Initial number of projects to display
-
-  const handleSeeMore = () => {
-    setVisibleProjects((prevCount) => prevCount + 3); // Show 3 more projects when "See More" is clicked
-  };
+  const [visibleProjects, setVisibleProjects] = useState(100); // Initial number of projects to display
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -32,14 +69,12 @@ const Projects = () => {
             id: doc.id,
             ...doc.data(),
           });
-          console.log(doc.data().description);
         });
 
         projectList.sort((a, b) => {
           return b.id - a.id;
         });
 
-        console.log(projectList);
         setProjects(projectList);
       }
     };
@@ -54,7 +89,7 @@ const Projects = () => {
         </h1>
         <div className="flex flex-row flex-wrap px-[10rem]">
           {projects.slice(0, visibleProjects).map((project, index) => (
-            <div key={project.id} className="w-1/3 pr-2">
+            <div key={project.id} className="w-1/3">
               <ProjectCard
                 title={project.title}
                 description={project.description}
@@ -62,19 +97,13 @@ const Projects = () => {
                 image={project.image}
                 github_links={project.github_links}
                 live_links={project.live_links}
+                banner_image={project.banner_image}
                 date={project.date}
+                contentID={project.contentID}
               />
             </div>
           ))}
         </div>
-        {visibleProjects < projects.length && (
-          <button
-            onClick={handleSeeMore}
-            className="mt-4 mx-auto w-48 bg-gray-800 text-white py-2 px-4 rounded-3xl font-mono transition duration-300 hover:bg-gray-700"
-          >
-            See More
-          </button>
-        )}
       </div>
     </div>
   );
@@ -87,104 +116,235 @@ const ProjectCard = ({
   image,
   github_links,
   live_links,
+  banner_image,
   date,
+  contentID,
 }) => {
+  const imageSrc = "image.png";
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
   return (
-    <Card className="max-w-[24rem] overflow-hidden rounded-md m-2 mb-14">
-      <CardHeader
-        floated={false}
-        shadow={false}
-        color="transparent"
-        className="m-0 rounded-none"
-      >
-        <div
-          className={`flex h-full w-[24rem] bg-gray-800 p-6 justify-center items-center`}
+    <div>
+      <Card className="max-w-[28rem] h-[39rem] overflow-hidden rounded-md m-2 mb-14">
+        <CardHeader
+          floated={false}
+          shadow={false}
+          color="transparent"
+          className="m-0 rounded-none"
         >
-          <div className="w-[120px] h-[120px] my-8 flex items-center justify-center overflow-hidden rounded-full bg-white hover:scale-110 ease-in-out transition-transform">
-            {image ? (
-              <img
-                src={image}
-                alt="Logo"
-                className="w-full h-full object-cover"
-                style={{ display: "block", borderRadius: "50%" }}
-              />
+          <div
+            className={`flex h-[16rem] w-full bg-gray-800 justify-center items-center relative`}
+          >
+            {banner_image ? (
+              <div>
+                <img
+                  src={banner_image}
+                  alt="Description of the image"
+                  className="h-max w-max object-cover rounded-lg"
+                />
+                {contentID ? (
+                  <div
+                    onClick={() => {
+                      setOpen(true);
+                    }}
+                    className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 hover:cursor-pointer transition-opacity duration-300 bg-black bg-opacity-50 rounded-lg"
+                  >
+                    <p className="text-white text-center">
+                      Click for more info
+                    </p>
+                  </div>
+                ) : (
+                  <div />
+                )}
+              </div>
             ) : (
-              <span className="text-black text-[3rem] font-bold">
-                {title &&
-                  title
-                    .split(" ")
-                    .map((word) => word[0])
-                    .join("")
-                    .toUpperCase()}
-              </span>
+              <div></div>
             )}
           </div>
-        </div>
-      </CardHeader>
-      <CardBody>
-        <Typography
-          variant="h4"
-          className="mb-2 text-2xl font-bold text-blue-800"
-        >
-          {title}
-        </Typography>
-        <div className="flex flex-wrap">
-          {tags &&
-            tags.split(", ").map((tag) => (
-              <p
-                className="text-gray-500 bg-gray-100 rounded-2xl p-2 text-xs mr-1"
-                key={tag}
+        </CardHeader>
+        <CardBody className="mb-10">
+          <div className="flex items-center mb-6">
+            <div className="w-[80px] h-[80px] flex items-center justify-center overflow-hidden rounded-full bg-white hover:scale-110 ease-in-out transition-transform">
+              {image ? (
+                <img
+                  src={image}
+                  alt="Logo"
+                  className="w-full h-full object-cover"
+                  style={{ display: "block", borderRadius: "50%" }}
+                />
+              ) : (
+                <span className="text-black text-[2rem] font-bold">
+                  {title &&
+                    title
+                      .split(" ")
+                      .map((word) => word[0])
+                      .join("")
+                      .toUpperCase()}
+                </span>
+              )}
+            </div>
+            <div className="ml-8">
+              <Typography
+                variant="h4"
+                className="mb-2 text-2xl font-bold text-blue-800"
               >
-                {tag}
-              </p>
-            ))}
-        </div>
-        {/* add for tag with gray text color */}
-        <Typography
-          variant="lead"
-          color="gray"
-          className="mt-4 font-normal h-[6rem] text-base text-gray-500 text-justify"
-        >
-          {description}
-        </Typography>
-      </CardBody>
-      <CardFooter className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <Tooltip content="Github">
-            {/* if github link exist blue if not gray */}
-            <GitHub
-              className={
-                github_links
-                  ? "text-blue-800 hover:cursor-pointer"
-                  : "text-gray-500"
-              }
-              onClick={() => {
-                if (github_links) {
-                  window.open(github_links, "_blank");
-                }
-              }}
-            ></GitHub>
-          </Tooltip>
+                {title}
+              </Typography>
 
-          <Tooltip content="Live">
-            <Code
-              className={
-                live_links
-                  ? "text-blue-800 hover:cursor-pointer"
-                  : "text-gray-500"
-              }
-              onClick={() => {
-                if (live_links) {
-                  window.open(live_links, "_blank");
+              <div className="flex flex-wrap">
+                {tags &&
+                  tags.split(", ").map((tag) => (
+                    <p
+                      className="text-gray-500 bg-gray-100 rounded-2xl p-2 text-xs mr-1"
+                      key={tag}
+                    >
+                      {tag}
+                    </p>
+                  ))}
+              </div>
+            </div>
+          </div>
+          <div className="mb-6"></div>
+          <ul>
+            {description.map((desc, index) => (
+              <li
+                key={index}
+                className="text-black text-[0.86rem] text-justify bg-gray-50 mb-2 p-2 rounded-lg"
+              >
+                {desc}
+              </li>
+            ))}
+          </ul>
+        </CardBody>
+        <CardFooter className="absolute bottom-0 left-0 right-0 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Tooltip content="Live">
+              <CodeSharp
+                className={
+                  live_links
+                    ? "text-blue-800 hover:cursor-pointer"
+                    : "text-gray-500"
                 }
-              }}
-            ></Code>
-          </Tooltip>
-        </div>
-        <Typography>{date ? date : ""}</Typography>
-      </CardFooter>
-    </Card>
+                onClick={() => {
+                  if (live_links) {
+                    window.open(live_links, "_blank");
+                  }
+                }}
+              ></CodeSharp>
+            </Tooltip>
+
+            <Tooltip content="Github">
+              <GitHub
+                className={
+                  github_links
+                    ? "text-blue-800 hover:cursor-pointer"
+                    : "text-gray-500"
+                }
+                onClick={() => {
+                  if (github_links) {
+                    window.open(github_links, "_blank");
+                  }
+                }}
+              ></GitHub>
+            </Tooltip>
+
+            {/* <Tooltip content="Attachments">
+              <Link
+                className={"text-blue-800 hover:cursor-pointer"}
+                onClick={() => {
+                  setOpen(true);
+                }}
+              ></Link>
+            </Tooltip> */}
+          </div>
+          <Typography>{date ? date : ""}</Typography>
+        </CardFooter>
+      </Card>
+
+      <Dialog open={open} fullScreen={true} handler={handleOpen}>
+        <DialogHeader className="sticky top-0 bg-white bg-opacity-70 z-50 p-4 shadow">
+          <Button
+            variant="text"
+            onClick={() => handleOpen(null)}
+            className="mr-1 text-4xl hover:scale-125"
+          >
+            <Close />
+          </Button>
+          {/* <h1 className="text-mono text-2xl">BR-Reader</h1> */}
+        </DialogHeader>
+        {contentID ? <ReaderView contentID={contentID} /> : <div></div>}
+      </Dialog>
+    </div>
   );
 };
 
+const ReaderView = ({ contentID }) => {
+  const { isAdmin } = useAuth();
+  const [content, setContent] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const docRef = doc(database, "contents", contentID);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setContent(docSnap.data().content);
+      } else {
+        setContent("<p>Data will be updated soon!</p>");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSave = async (editedContent) => {
+    const docRef = doc(database, "contents", contentID);
+    try {
+      await updateDoc(docRef, {
+        content: editedContent,
+      });
+    } catch (err) {
+      console.log("cannot update because", err);
+    }
+  };
+
+  return (
+    <>
+      <DialogBody>
+        {content ? (
+          <div className="px-48">
+            {isAdmin ? (
+              <Editable htmlContent={content} onSave={handleSave} />
+            ) : (
+              <QuillViewer content={content} />
+            )}
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </DialogBody>
+    </>
+  );
+};
+
+const ImageCarousel = ({ images }) => {
+  return (
+    <Card className="h-screen w-[48rem]">
+      <ImageListItem sx={{ display: "block" }}>
+        {images.map((image) => (
+          <img
+            key={image}
+            src={image}
+            alt="Gallery"
+            className="w-full object-cover"
+          />
+        ))}
+      </ImageListItem>
+    </Card>
+  );
+};
 export default Projects;
